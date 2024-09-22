@@ -171,7 +171,7 @@ async def mytime(interaction: discord.Interaction, member: discord.Member = None
     # If no data found, respond accordingly
     if data is None:
         await interaction.response.send_message(
-            f"{member.mention} hasn't spent any time in voice channels yet."
+            f"{member} hasn't spent any time in voice channels yet."
         )
         return
 
@@ -187,7 +187,7 @@ async def mytime(interaction: discord.Interaction, member: discord.Member = None
     hours, remainder = divmod(total_time, 3600)
     minutes, seconds = divmod(remainder, 60)
     await interaction.response.send_message(
-        f"{member.mention}, you've spent **{int(hours)} hours**, **{int(minutes)} minutes**, and **{int(seconds)} seconds** in voice chat."
+        f"{member}, you've spent **{int(hours)} hours**, **{int(minutes)} minutes**, and **{int(seconds)} seconds** in voice chat."
     )
 
 
@@ -207,15 +207,13 @@ async def delete_time(interaction: discord.Interaction, member: discord.Member):
     # Check if the user has data in the database
     if get_user_data(user_id) is None:
         await interaction.response.send_message(
-            f"{member.mention} does not have any voice chat time recorded."
+            f"{member} does not have any voice chat time recorded."
         )
         return
 
     # Delete the user's voice chat time
     delete_user_data(user_id)
-    await interaction.response.send_message(
-        f"Deleted voice chat time for {member.mention}."
-    )
+    await interaction.response.send_message(f"Deleted voice chat time for {member}.")
 
 
 @tasks.loop(hours=12)
