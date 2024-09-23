@@ -312,68 +312,6 @@ async def reset_all_times(interaction: discord.Interaction):
         )
 
 
-async def add_time(self, ctx, member: discord.Member, hours: int, minutes: int = 0):
-    # Convert the given hours and minutes to seconds
-    additional_time = hours * 3600 + minutes * 60
-
-    # Fetch the user's current total time from the database
-    data = self.get_user_data(member.id)
-    total_time = data[0] or 0  # If no time is found, start from 0
-
-    # Add the new time to the total
-    new_total_time = total_time + additional_time
-    self.update_total_time(member.id, new_total_time)
-
-    # Send a confirmation message
-    await ctx.send(
-        f"Added **{hours} hours** and **{minutes} minutes** to {member.mention}'s voice chat time."
-    )
-
-
-@app_commands.command(
-    name="add_time_slash", description="Add voice chat time to a user"
-)
-@app_commands.describe(
-    user="The user to give time",
-    hours="The number of hours to add",
-    minutes="Optional: Minutes to add",
-)
-async def add_time_slash(
-    self,
-    interaction: discord.Interaction,
-    user: discord.Member,
-    hours: int,
-    minutes: int = 0,
-):
-    if not interaction.user.guild_permissions.administrator:
-        await interaction.response.send_message(
-            "You don't have permission to use this command.", ephemeral=True
-        )
-        return
-
-    # Convert hours and minutes to seconds
-    additional_time = hours * 3600 + minutes * 60
-
-    # Fetch and update the user's time in the database
-    data = self.get_user_data(user.id)
-    total_time = data[0] or 0  # If no time is found, assume 0
-    new_total_time = total_time + additional_time
-    self.update_total_time(user.id, new_total_time)
-
-    await interaction.response.send_message(
-        f"Added **{hours} hours** and **{minutes} minutes** to {user.mention}'s voice chat time."
-    )
-
-
-def update_total_time(self, user_id, total_time):
-    # Update the total time in the database
-    self.cursor.execute(
-        "REPLACE INTO voice_times (user_id, total_time, join_time) VALUES (?, ?, NULL)",
-        (user_id, total_time),
-    )
-    self.conn.commit()
-
-
 # Ensure bot syncs slash commands
 @bot.event
 async def on_ready():
